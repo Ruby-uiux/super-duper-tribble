@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шагайн Уралдаан</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .race-track {
+            width: 100%;
+            height: 100px;
+            position: relative;
+            border-bottom: 15px dashed black;
+        }
+        .horse {
+            position: absolute;
+            width: 80px;
+            transition: left 0.5s ease-in-out;
+        }
+        .finish-line {
+            position: absolute;
+            right: 10px;
+            top: 0;
+            width: 10px;
+            height: 150px;
+            background: repeating-linear-gradient(90deg, black, black 5px, white 5px, white 10px);
+        }
+        .image-pieces {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .image-piece {
+            width: 80px;
+            height: 80px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body class="container text-center mt-4">
+
+    <h2>Шагайн Уралдаан</h2>
+    <div class="image-pieces">
+        <img id="piece1" class="image-piece" src="horsei.png" alt="Piece 1">
+        <img id="piece2" class="image-piece" src="sheep.png" alt="Piece 2">
+        <img id="piece3" class="image-piece" src="camel.png" alt="Piece 3">
+        <img id="piece4" class="image-piece" src="goat.png" alt="Piece 4">
+    </div>
+    
+    <button id="rollDice" class="btn btn-warning">Шагай орхих</button>
+
+    <div class="mt-4">
+        <div>ТОГЛОГЧ 1</div>
+        <div class="race-track">
+            <img id="horse1" class="horse" src="horse.png" alt="Морь 1">
+            <div class="finish-line"></div>
+        </div>
+
+        <div>ТОГЛОГЧ 2</div>
+        <div class="race-track">
+            <img id="horse2" class="horse" src="horse.png" alt="Морь 2">
+            <div class="finish-line"></div>
+        </div>
+    </div>
+
+    <script>
+        const horse1 = document.getElementById("horse1"); 
+        const horse2 = document.getElementById("horse2");
+        const button = document.getElementById("rollDice");
+        const pieces = [
+            document.getElementById("piece1"),
+            document.getElementById("piece2"),
+            document.getElementById("piece3"),
+            document.getElementById("piece4")
+        ];
+
+        const positions = { horse1: 0, horse2: 0 };
+        const images = ["horsei.png", "sheep.png", "camel.png", "goat.png"];
+        const finishLine = 1100; // Adjust based on your layout
+        let currentPlayer = 1; // Start with Player 1
+
+        button.addEventListener("click", () => {
+            // Randomly assign images to the pieces
+            pieces.forEach(piece => {                      
+                const randomIndex = Math.floor(Math.random() * images.length);
+                piece.src = images[randomIndex];
+            });
+
+            // Count the number of "horsei.png" images
+            const horseCount = pieces.filter(piece => piece.src.includes("horsei.png")).length;
+
+            // Move the current player's horse based on the count
+            if (currentPlayer === 1) {
+                positions.horse1 += horseCount * 100; // Increased movement to 100px per "horsei.png"
+                horse1.style.left = positions.horse1 + "px";
+                if (positions.horse1 >= finishLine) {
+                    alert("Тоглогч 1 яллаа!");
+                    resetGame();
+                    return;
+                }
+            } else {
+                positions.horse2 += horseCount * 100; // Increased movement to 100px per "horsei.png"
+                horse2.style.left = positions.horse2 + "px";
+                if (positions.horse2 >= finishLine) {
+                    alert("Тоглогч 2 яллаа!");
+                    resetGame();
+                    return;
+                }
+            }
+
+            // дараачийн тоглогч руу шилжих
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+
+            // хэний ээлж вэ гэдгийг харуулах
+            button.textContent = `Шагай орхих (Тоглогч ${currentPlayer})`;
+        });
+
+        function resetGame() {
+            // Reset positions
+            positions.horse1 = 0;
+            positions.horse2 = 0;
+            horse1.style.left = "0px";
+            horse2.style.left = "0px";
+
+            // Reset turn and button
+            currentPlayer = 1;
+            button.disabled = false;
+            button.textContent = "Шагай орхих (Тоглогч 1)";
+        }
+    </script>
+
+</body>
+</html>
+
